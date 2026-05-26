@@ -3,14 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0e8bd8" />
   <meta name="description" content="Order clean water delivery across Nairobi with fast same-day service and easy M-Pesa or cash payment." />
+  <meta name="keywords" content="water delivery, Nairobi, M-Pesa, bottled water, same-day delivery" />
+  <meta property="og:title" content="HOUSE OF MAJI Water Delivery | Nairobi" />
+  <meta property="og:description" content="Clean water delivered across Nairobi. Fast same-day delivery and easy payment options." />
+  <meta property="og:image" content="https://images.pexels.com/photos/1712110/pexels-photo-1712110.jpeg" />
   <title>HOUSE OF MAJI Water Delivery | Nairobi</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preload" href="styles.css" as="style">
   <link rel="stylesheet" href="styles.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "HOUSE OF MAJI",
+    "image": "https://images.pexels.com/photos/1712110/pexels-photo-1712110.jpeg",
+    "telephone": "+254700000000",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Nairobi",
+      "addressCountry": "KE"
+    },
+    "description": "Same-day water delivery across Nairobi. Order bottled water and pay via M-Pesa or cash."
+  }
+  </script>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
   <div class="page-shell">
     <div class="page-waves" aria-hidden="true"></div>
     <header class="site-header">
@@ -18,9 +40,15 @@
         <div class="brand-logo"><span class="logo-mark" aria-hidden="true">💧</span>HOUSE OF MAJI</div>
         <div class="brand-tag">Water Delivery</div>
       </div>
+      <button id="mobileNavToggle" class="mobile-nav-toggle" aria-controls="mobileNav" aria-expanded="false" aria-label="Open menu">☰</button>
       <nav class="top-nav">
         <a href="#order">Order</a>
         <a href="#contact">Contact</a>
+      </nav>
+      <nav id="mobileNav" class="mobile-nav" hidden aria-label="Mobile menu">
+        <a href="#order">Order</a>
+        <a href="#contact">Contact</a>
+        <a href="https://wa.me/254700000000" target="_blank" rel="noreferrer">WhatsApp</a>
       </nav>
       <div class="header-actions">
         <a class="whatsapp-btn" href="https://wa.me/254700000000" target="_blank" rel="noreferrer">WhatsApp</a>
@@ -28,6 +56,7 @@
     </header>
 
     <main>
+      <section aria-hidden="true" class="hero-decorative" />
       <section class="hero-section" id="hero">
         <div class="hero-copy">
           <p class="eyebrow">Nairobi water delivery</p>
@@ -43,7 +72,11 @@
           </div>
         </div>
         <div class="hero-visual">
-          <div class="visual-card">
+          <div class="visual-card" role="img" aria-label="Map of Nairobi with delivery coverage">
+            <!-- Decorative SVG wave for polish -->
+            <svg class="hero-wave" width="100%" height="80" viewBox="0 0 1200 80" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0,40 C150,80 350,0 600,40 C850,80 1050,0 1200,40 L1200,100 L0,100 Z" fill="#e7f8ff" opacity="0.9"></path>
+            </svg>
             <div class="visual-map">Nairobi</div>
             <div class="visual-packages">
               <span>5L</span><span>20L</span><span>50L</span>

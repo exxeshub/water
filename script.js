@@ -19,6 +19,18 @@ window.addEventListener('load', function () {
     return;
   }
 
+  // Mobile nav toggle
+  const mobileNavToggle = document.getElementById('mobileNavToggle');
+  const mobileNav = document.getElementById('mobileNav');
+  if (mobileNavToggle && mobileNav) {
+    mobileNavToggle.addEventListener('click', () => {
+      const expanded = mobileNavToggle.getAttribute('aria-expanded') === 'true';
+      mobileNavToggle.setAttribute('aria-expanded', String(!expanded));
+      mobileNav.hidden = expanded;
+      if (!expanded) mobileNav.querySelector('a')?.focus();
+    });
+  }
+
   const qtyMinus = document.getElementById('qtyMinus');
   const qtyPlus = document.getElementById('qtyPlus');
   const qtyValue = document.getElementById('qtyValue');
@@ -305,8 +317,31 @@ window.addEventListener('load', function () {
       orderFeedback.innerHTML = `Thanks ${name}! Your order for ${quantity} × ${selectedLiters}L water is ready. ${paymentMessage} Use the buttons below to send this booking by email or WhatsApp.`;
     }
 
-    sendOptionsVisible(true);
-    updatePrices();
+    // Build order object and try server submit, fallback to client share
+    const order = buildOrderObject();
+    // Try POST to server endpoint (if available). This requires a hosting PHP endpoint at /send_order.php
+    fetch('send_order.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(order),
+    }).then(res => res.json()).then(data => {
+      if (data && data.success) {
+        if (orderFeedback) {
+          orderFeedback.className = 'order-feedback';
+          orderFeedback.textContent = 'Order submitted. We will contact you shortly.';
+        }
+        sendOptionsVisible(false);
+        orderForm.reset();
+        quantity = 1;
+        if (qtyValue) qtyValue.textContent = quantity;
+        updateSelection(5);
+      } else {
+        // fallback: show client-side options
+        sendOptionsVisible(true);
+      }
+    }).catch(() => {
+      sendOptionsVisible(true);
+    }).finally(() => updatePrices());
   });
 
   updateSelection(5);
