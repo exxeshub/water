@@ -302,7 +302,7 @@ window.addEventListener('load', function () {
     if (!name || !phone || !location) {
       if (orderFeedback) {
         orderFeedback.className = 'order-feedback error';
-        orderFeedback.textContent = 'Please fill in your name, phone, and location to place your order.';
+        orderFeedback.textContent = 'Almost there — please add your name, phone, and location so we can bring your water right away.';
       }
       sendOptionsVisible(false);
       return;
@@ -314,7 +314,7 @@ window.addEventListener('load', function () {
 
     if (orderFeedback) {
       orderFeedback.className = 'order-feedback';
-      orderFeedback.innerHTML = `Thanks ${name}! Your order for ${quantity} × ${selectedLiters}L water is ready. ${paymentMessage} Use the buttons below to send this booking by email or WhatsApp.`;
+      orderFeedback.innerHTML = `Thanks ${name}! Your ${selectedLiters}L water order is all set — we’ll deliver it with care. ${paymentMessage} Use the buttons below to send this booking by email or WhatsApp.`;
     }
 
     // Build order object and try server submit, fallback to client share
