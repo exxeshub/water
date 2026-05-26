@@ -30,6 +30,9 @@ window.addEventListener('load', function () {
   const galleryCards = Array.from(document.querySelectorAll('.gallery-card'));
   const paymentInfo = document.getElementById('paymentInfo');
   const copyPaymentDetailsBtn = document.getElementById('copyPaymentDetails');
+  const sendOptions = document.getElementById('sendOptions');
+  const emailOrderBtn = document.getElementById('emailOrderBtn');
+  const whatsappOrderBtn = document.getElementById('whatsappOrderBtn');
   const orderFeedback = document.getElementById('orderFeedback');
   const paymentInputs = Array.from(document.querySelectorAll('input[name="payment"]'));
 
@@ -134,6 +137,49 @@ window.addEventListener('load', function () {
     }
   };
 
+  const buildOrderSummary = order => {
+    return `Booking details:%0AName: ${order.name}%0APhone: ${order.phone}%0ALocation: ${order.location}%0ABuilding: ${order.building || 'N/A'}%0ANotes: ${order.notes || 'None'}%0ASelected liters: ${order.liters}L%0AQuantity: ${order.quantity}%0APayment: ${order.payment}%0AWater cost: ${order.waterPrice}%0ADelivery fee: ${order.deliveryFee}%0ATotal: ${order.total}`;
+  };
+
+  const getMailtoLink = order => {
+    const subject = 'HOUSE OF MAJI booking';
+    const body = decodeURIComponent(buildOrderSummary(order)).replace(/%0A/g, '\n');
+    return `mailto:orders@houseofmajiwater.co.ke?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
+  const getWhatsappLink = order => {
+    const body = buildOrderSummary(order);
+    return `https://wa.me/254700000000?text=${body}`;
+  };
+
+  const sendOptionsVisible = visible => {
+    if (sendOptions) {
+      sendOptions.hidden = !visible;
+    }
+  };
+
+  const buildOrderObject = () => {
+    const nameInput = document.getElementById('customerName');
+    const phoneInput = document.getElementById('customerPhone');
+    const locationSelect = document.getElementById('locationSelect');
+    const buildingInput = document.getElementById('buildingInfo');
+    const notesInput = document.getElementById('deliveryNotes');
+
+    return {
+      name: nameInput ? nameInput.value.trim() : '',
+      phone: phoneInput ? phoneInput.value.trim() : '',
+      location: locationSelect ? locationSelect.value : '',
+      building: buildingInput ? buildingInput.value.trim() : '',
+      notes: notesInput ? notesInput.value.trim() : '',
+      liters: selectedLiters,
+      quantity,
+      payment: currentPaymentMethod,
+      waterPrice: formatPrice(getWaterPrice()),
+      deliveryFee: formatPrice(deliveryFee),
+      total: formatPrice(getTotalPrice()),
+    };
+  };
+
   const updateSelection = liters => {
     selectedLiters = normalizeLiters(liters) || 0;
     litersButtons.forEach(button => {
@@ -217,6 +263,20 @@ window.addEventListener('load', function () {
     copyPaymentDetailsBtn.addEventListener('click', copyPaymentDetails);
   }
 
+  if (emailOrderBtn) {
+    emailOrderBtn.addEventListener('click', () => {
+      const currentOrder = buildOrderObject();
+      window.location.href = getMailtoLink(currentOrder);
+    });
+  }
+
+  if (whatsappOrderBtn) {
+    whatsappOrderBtn.addEventListener('click', () => {
+      const currentOrder = buildOrderObject();
+      window.open(getWhatsappLink(currentOrder), '_blank');
+    });
+  }
+
   orderForm.addEventListener('submit', event => {
     event.preventDefault();
     const nameInput = document.getElementById('customerName');
@@ -232,6 +292,7 @@ window.addEventListener('load', function () {
         orderFeedback.className = 'order-feedback error';
         orderFeedback.textContent = 'Please fill in your name, phone, and location to place your order.';
       }
+      sendOptionsVisible(false);
       return;
     }
 
@@ -241,16 +302,11 @@ window.addEventListener('load', function () {
 
     if (orderFeedback) {
       orderFeedback.className = 'order-feedback';
-      orderFeedback.innerHTML = `Thanks ${name}! Your order for ${quantity} × ${selectedLiters}L water is ready. ${paymentMessage}`;
+      orderFeedback.innerHTML = `Thanks ${name}! Your order for ${quantity} × ${selectedLiters}L water is ready. ${paymentMessage} Use the buttons below to send this booking by email or WhatsApp.`;
     }
 
-    orderForm.reset();
-    quantity = 1;
-    if (qtyValue) {
-      qtyValue.textContent = quantity;
-    }
-    updateSelection(5);
-    updatePaymentInfo('mpesa');
+    sendOptionsVisible(true);
+    updatePrices();
   });
 
   updateSelection(5);
