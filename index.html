@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Order clean water delivery across Nairobi with fast same-day service and easy M-Pesa or cash payment." />
+  <title>HOUSE OF MAJI Water Delivery | Nairobi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="brand-row">
+        <div class="brand-logo">HOUSE OF MAJI</div>
+        <div class="brand-tag">Water Delivery</div>
+      </div>
+      <nav class="top-nav">
+        <a href="#order">Order</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <a class="whatsapp-btn" href="https://wa.me/254700000000" target="_blank" rel="noreferrer">WhatsApp</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-section" id="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Nairobi water delivery</p>
+          <h1>Clean Water Delivered Anywhere in Nairobi</h1>
+          <p class="hero-text">Fast local delivery for homes, apartments, offices, and shops.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#order">Order Water</a>
+            <a class="button secondary" href="https://wa.me/254700000000" target="_blank" rel="noreferrer">WhatsApp Delivery</a>
+          </div>
+          <div class="hero-highlights">
+            <div><strong>Same-day delivery</strong> in Nairobi neighborhoods</div>
+            <div><strong>Trusted local team</strong> for houses, apartments & shops</div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="visual-card">
+            <div class="visual-map">Nairobi</div>
+            <div class="visual-packages">
+              <span>5L</span><span>20L</span><span>50L</span>
+            </div>
+            <div class="visual-rider"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="gallery-section">
+        <div class="section-heading">
+          <span>Choose your bottle</span>
+          <h2>Browse clean water options</h2>
+        </div>
+        <div class="gallery-grid">
+          <article class="gallery-card active" data-liters="5">
+            <img src="https://images.pexels.com/photos/1712110/pexels-photo-1712110.jpeg?auto=compress&cs=tinysrgb&w=800" alt="5 liter water bottle" loading="lazy" />
+            <div class="gallery-copy">
+              <strong>5L Bottle</strong>
+              <p>Perfect for small households and fast refills.</p>
+            </div>
+          </article>
+          <article class="gallery-card" data-liters="20">
+            <img src="https://images.pexels.com/photos/265974/pexels-photo-265974.jpeg?auto=compress&cs=tinysrgb&w=800" alt="20 liter water bottle" loading="lazy" />
+            <div class="gallery-copy">
+              <strong>20L Jug</strong>
+              <p>Great for families and daily home use.</p>
+            </div>
+          </article>
+          <article class="gallery-card" data-liters="50">
+            <img src="https://images.pexels.com/photos/163038/pexels-photo-163038.jpeg?auto=compress&cs=tinysrgb&w=800" alt="50 liter water dispenser bottle" loading="lazy" />
+            <div class="gallery-copy">
+              <strong>50L Bulk</strong>
+              <p>Ideal for offices, events, and large deliveries.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="order-section" id="order">
+        <div class="section-heading">
+          <span>Quick Order</span>
+          <h2>Place your Nairobi water order in seconds</h2>
+        </div>
+        <div class="order-grid">
+          <div class="order-panel glass-card">
+            <div class="panel-title">Select your water</div>
+            <div class="liters-grid">
+              <button class="liters-btn active" data-liters="5">5 Liters</button>
+              <button class="liters-btn" data-liters="10">10 Liters</button>
+              <button class="liters-btn" data-liters="20">20 Liters</button>
+              <button class="liters-btn" data-liters="50">50 Liters</button>
+              <div class="custom-field">
+                <input type="number" id="customLiters" min="1" placeholder="Custom" />
+                <span>Liters</span>
+              </div>
+            </div>
+            <div class="quantity-control">
+              <span>Quantity</span>
+              <div>
+                <button class="qty-btn" id="qtyMinus">-</button>
+                <span id="qtyValue">1</span>
+                <button class="qty-btn" id="qtyPlus">+</button>
+              </div>
+            </div>
+
+            <div class="price-summary">
+              <div>
+                <span>Water cost</span>
+                <strong id="waterPrice">KSh 150</strong>
+              </div>
+              <div>
+                <span>Delivery fee</span>
+                <strong id="deliveryFee">KSh 100</strong>
+              </div>
+              <div class="total-row">
+                <span>Total</span>
+                <strong id="orderTotal">KSh 250</strong>
+              </div>
+            </div>
+          </div>
+
+          <form class="form-panel glass-card" id="orderForm">
+            <div class="panel-title">Delivery details</div>
+            <label>
+              Name
+              <input type="text" id="customerName" placeholder="Your name" required />
+            </label>
+            <label>
+              Phone number
+              <input type="tel" id="customerPhone" placeholder="07XXXXXXXX" required />
+            </label>
+            <label>
+              Nairobi location / estate
+              <select id="locationSelect" required>
+                <option value="">Choose area</option>
+                <option>Westlands</option>
+                <option>Kilimani</option>
+                <option>Kileleshwa</option>
+                <option>Kasarani</option>
+                <option>Embakasi</option>
+                <option>Rongai</option>
+                <option>South B</option>
+                <option>South C</option>
+                <option>Ruaka</option>
+                <option>Ruiru</option>
+                <option>Syokimau</option>
+                <option>Kitengela</option>
+              </select>
+            </label>
+            <label>
+              Building / apartment
+              <input type="text" id="buildingInfo" placeholder="Block, flat, shop name" />
+            </label>
+            <label>
+              Delivery notes
+              <textarea id="deliveryNotes" rows="3" placeholder="Leave gate code, landmark or special instructions"></textarea>
+            </label>
+
+            <div class="payment-options">
+              <span>Payment</span>
+              <label class="option-label"><input type="radio" name="payment" value="mpesa" checked /> M-Pesa</label>
+              <label class="option-label"><input type="radio" name="payment" value="cash" /> Cash on delivery</label>
+            </div>
+            <div class="payment-info" id="paymentInfo">
+              Use M-Pesa Paybill <strong>345678</strong> with your phone number as account.
+            </div>
+
+            <button type="submit" class="button primary full">Place Order</button>
+            <p class="order-note">We deliver across Nairobi neighborhoods only. Order now and get your water today.</p>
+            <div id="orderFeedback" class="order-feedback"></div>
+          </form>
+        </div>
+      </section>
+
+      <section class="contact-section" id="contact">
+        <div class="section-heading">
+          <span>Contact</span>
+          <h2>Ready for your Nairobi water order?</h2>
+        </div>
+        <div class="contact-grid glass-card">
+          <div>
+            <p><strong>WhatsApp:</strong> <a href="https://wa.me/254700000000" target="_blank" rel="noreferrer">+254 700 000 000</a></p>
+            <p><strong>Phone:</strong> +254 700 000 000</p>
+            <p><strong>Email:</strong> orders@houseofmajiwater.co.ke</p>
+            <p><strong>Hours:</strong> 7am — 9pm daily</p>
+            <p><strong>Serving:</strong> Nairobi neighborhoods only</p>
+          </div>
+          <div class="contact-map">
+            <div class="map-pin-large">Nairobi pin</div>
+            <p>Local delivery coverage across Westlands, CBD, Embakasi, Rongai, Ruaka, and surrounding estates.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div>© 2026 HOUSE OF MAJI Water Delivery</div>
+      <div class="footer-links">
+        <a href="#order">Order</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </footer>
+
+    <a class="floating-whatsapp" href="https://wa.me/254700000000" target="_blank" rel="noreferrer">WhatsApp</a>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
