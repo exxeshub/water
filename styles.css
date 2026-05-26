@@ -488,6 +488,8 @@ h1 {
 }
 
 .payment-info {
+  display: grid;
+  gap: 12px;
   padding: 16px;
   border-radius: 18px;
   background: rgba(29, 117, 214, 0.08);
@@ -498,6 +500,15 @@ h1 {
 
 .payment-info strong {
   color: var(--primary);
+}
+
+.copy-btn {
+  width: fit-content;
+  padding: 12px 18px;
+}
+
+.payment-copy-text {
+  line-height: 1.6;
 }
 
 .order-feedback {

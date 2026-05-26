@@ -29,6 +29,7 @@ window.addEventListener('load', function () {
   const litersButtons = Array.from(document.querySelectorAll('.liters-btn'));
   const galleryCards = Array.from(document.querySelectorAll('.gallery-card'));
   const paymentInfo = document.getElementById('paymentInfo');
+  const copyPaymentDetailsBtn = document.getElementById('copyPaymentDetails');
   const orderFeedback = document.getElementById('orderFeedback');
   const paymentInputs = Array.from(document.querySelectorAll('input[name="payment"]'));
 
@@ -41,12 +42,45 @@ window.addEventListener('load', function () {
   const deliveryFee = 100;
   let selectedLiters = 5;
   let quantity = 1;
+  let currentPaymentMethod = 'mpesa';
 
   const formatPrice = value => `KSh ${value.toLocaleString('en-KE')}`;
 
-  const safeTextUpdate = (element, text) => {
-    if (element) {
-      element.textContent = text;
+  const normalizeLiters = value => {
+    const liters = Number(value);
+    if (!Number.isFinite(liters) || liters < 1) {
+      return 0;
+    }
+    return Math.round(liters);
+  };
+
+  const getWaterPrice = () => {
+    if (!selectedLiters) {
+      return 0;
+    }
+    if (basePrices[selectedLiters]) {
+      return basePrices[selectedLiters] * quantity;
+    }
+    return Math.round(selectedLiters * 28 * quantity);
+  };
+
+  const getTotalPrice = () => getWaterPrice() + deliveryFee;
+
+  const buildPaymentText = paymentMethod => {
+    if (paymentMethod === 'cash') {
+      return 'Pay cash on delivery. Please have the exact amount ready when your order arrives.';
+    }
+    return `Use M-Pesa Paybill <strong>345678</strong> with your phone number as account. Amount due: ${formatPrice(getTotalPrice())}.`;
+  };
+
+  const updatePaymentInfo = paymentMethod => {
+    currentPaymentMethod = paymentMethod;
+    if (!paymentInfo) {
+      return;
+    }
+    paymentInfo.innerHTML = `<div class="payment-copy-text">${buildPaymentText(paymentMethod)}</div>`;
+    if (copyPaymentDetailsBtn) {
+      copyPaymentDetailsBtn.hidden = paymentMethod !== 'mpesa';
     }
   };
 
@@ -61,14 +95,43 @@ window.addEventListener('load', function () {
     if (orderTotalLabel) {
       orderTotalLabel.textContent = formatPrice(waterPrice + deliveryFee);
     }
+    updatePaymentInfo(currentPaymentMethod);
   };
 
-  const normalizeLiters = value => {
-    const liters = Number(value);
-    if (!Number.isFinite(liters) || liters < 1) {
-      return 0;
+  const copyPaymentDetails = () => {
+    if (!copyPaymentDetailsBtn) {
+      return;
     }
-    return Math.round(liters);
+    const phoneInput = document.getElementById('customerPhone');
+    const customerPhone = phoneInput ? phoneInput.value.trim() : '';
+    const amount = formatPrice(getTotalPrice());
+    const details = `M-Pesa Paybill: 345678\nAccount: ${customerPhone || 'your phone number'}\nAmount: ${amount}`;
+
+    const showCopySuccess = () => {
+      if (orderFeedback) {
+        orderFeedback.className = 'order-feedback';
+        orderFeedback.textContent = 'Payment details copied to clipboard. Paste them in M-Pesa to complete payment.';
+      }
+    };
+
+    const fallbackCopy = fallbackText => {
+      const textarea = document.createElement('textarea');
+      textarea.value = fallbackText;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'absolute';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      showCopySuccess();
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(details).then(showCopySuccess).catch(() => fallbackCopy(details));
+    } else {
+      fallbackCopy(details);
+    }
   };
 
   const updateSelection = liters => {
@@ -84,27 +147,6 @@ window.addEventListener('load', function () {
       galleryCards.forEach(card => card.classList.remove('active'));
     }
     updatePrices();
-  };
-
-  const getWaterPrice = () => {
-    if (!selectedLiters) {
-      return 0;
-    }
-    if (basePrices[selectedLiters]) {
-      return basePrices[selectedLiters] * quantity;
-    }
-    return Math.round(selectedLiters * 28 * quantity);
-  };
-
-  const setPaymentInfo = paymentMethod => {
-    if (!paymentInfo) {
-      return;
-    }
-    if (paymentMethod === 'cash') {
-      paymentInfo.textContent = 'Pay cash when your water is delivered anywhere in Nairobi.';
-    } else {
-      paymentInfo.innerHTML = 'Use M-Pesa Paybill <strong>345678</strong> with your phone number as account.';
-    }
   };
 
   if (qtyMinus) {
@@ -165,8 +207,15 @@ window.addEventListener('load', function () {
   }
 
   paymentInputs.forEach(input => {
-    input.addEventListener('change', event => setPaymentInfo(event.target.value));
+    input.addEventListener('change', event => {
+      updatePaymentInfo(event.target.value);
+      updatePrices();
+    });
   });
+
+  if (copyPaymentDetailsBtn) {
+    copyPaymentDetailsBtn.addEventListener('click', copyPaymentDetails);
+  }
 
   orderForm.addEventListener('submit', event => {
     event.preventDefault();
@@ -186,9 +235,13 @@ window.addEventListener('load', function () {
       return;
     }
 
+    const paymentMessage = currentPaymentMethod === 'cash'
+      ? 'Pay cash to the rider when your order arrives.'
+      : 'Complete M-Pesa payment to Paybill 345678 using your phone number as the account.';
+
     if (orderFeedback) {
       orderFeedback.className = 'order-feedback';
-      orderFeedback.textContent = `Thanks ${name}! Your order for ${quantity} × ${selectedLiters}L water is ready. We will contact you at ${phone} and deliver to ${location}.`;
+      orderFeedback.innerHTML = `Thanks ${name}! Your order for ${quantity} × ${selectedLiters}L water is ready. ${paymentMessage}`;
     }
 
     orderForm.reset();
@@ -197,9 +250,9 @@ window.addEventListener('load', function () {
       qtyValue.textContent = quantity;
     }
     updateSelection(5);
-    setPaymentInfo('mpesa');
+    updatePaymentInfo('mpesa');
   });
 
   updateSelection(5);
-  setPaymentInfo('mpesa');
+  updatePaymentInfo('mpesa');
 });

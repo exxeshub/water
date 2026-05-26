@@ -164,12 +164,15 @@
 
             <div class="payment-options">
               <span>Payment</span>
-              <label class="option-label"><input type="radio" name="payment" value="mpesa" checked /> M-Pesa</label>
-              <label class="option-label"><input type="radio" name="payment" value="cash" /> Cash on delivery</label>
+              <label class="option-label" for="paymentMpesa">
+                <input type="radio" id="paymentMpesa" name="payment" value="mpesa" checked /> M-Pesa
+              </label>
+              <label class="option-label" for="paymentCash">
+                <input type="radio" id="paymentCash" name="payment" value="cash" /> Cash on delivery
+              </label>
             </div>
-            <div class="payment-info" id="paymentInfo">
-              Use M-Pesa Paybill <strong>345678</strong> with your phone number as account.
-            </div>
+            <div class="payment-info" id="paymentInfo" aria-live="polite"></div>
+            <button type="button" class="button secondary copy-btn" id="copyPaymentDetails">Copy payment details</button>
 
             <button type="submit" class="button primary full">Place Order</button>
             <p class="order-note">We deliver across Nairobi neighborhoods only. Order now and get your water today.</p>
