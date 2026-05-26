@@ -15,6 +15,10 @@ window.addEventListener('load', function () {
   });
 
   const orderForm = document.getElementById('orderForm');
+  if (!orderForm) {
+    return;
+  }
+
   const qtyMinus = document.getElementById('qtyMinus');
   const qtyPlus = document.getElementById('qtyPlus');
   const qtyValue = document.getElementById('qtyValue');
@@ -22,10 +26,11 @@ window.addEventListener('load', function () {
   const deliveryFeeLabel = document.getElementById('deliveryFee');
   const orderTotalLabel = document.getElementById('orderTotal');
   const customLitersInput = document.getElementById('customLiters');
-  const litersButtons = document.querySelectorAll('.liters-btn');
-  const galleryCards = document.querySelectorAll('.gallery-card');
+  const litersButtons = Array.from(document.querySelectorAll('.liters-btn'));
+  const galleryCards = Array.from(document.querySelectorAll('.gallery-card'));
   const paymentInfo = document.getElementById('paymentInfo');
   const orderFeedback = document.getElementById('orderFeedback');
+  const paymentInputs = Array.from(document.querySelectorAll('input[name="payment"]'));
 
   const basePrices = {
     5: 150,
@@ -39,13 +44,40 @@ window.addEventListener('load', function () {
 
   const formatPrice = value => `KSh ${value.toLocaleString('en-KE')}`;
 
+  const safeTextUpdate = (element, text) => {
+    if (element) {
+      element.textContent = text;
+    }
+  };
+
+  const updatePrices = () => {
+    const waterPrice = getWaterPrice();
+    if (waterPriceLabel) {
+      waterPriceLabel.textContent = formatPrice(waterPrice);
+    }
+    if (deliveryFeeLabel) {
+      deliveryFeeLabel.textContent = formatPrice(deliveryFee);
+    }
+    if (orderTotalLabel) {
+      orderTotalLabel.textContent = formatPrice(waterPrice + deliveryFee);
+    }
+  };
+
+  const normalizeLiters = value => {
+    const liters = Number(value);
+    if (!Number.isFinite(liters) || liters < 1) {
+      return 0;
+    }
+    return Math.round(liters);
+  };
+
   const updateSelection = liters => {
-    selectedLiters = Number(liters) || 0;
+    selectedLiters = normalizeLiters(liters) || 0;
     litersButtons.forEach(button => {
-      button.classList.toggle('active', button.dataset.liters === String(liters));
+      button.classList.toggle('active', button.dataset.liters === String(selectedLiters));
     });
     galleryCards.forEach(card => {
-      card.classList.toggle('active', card.dataset.liters === String(liters));
+      card.classList.toggle('active', card.dataset.liters === String(selectedLiters));
     });
     if (customLitersInput && customLitersInput.value) {
       litersButtons.forEach(button => button.classList.remove('active'));
@@ -55,7 +87,7 @@ window.addEventListener('load', function () {
   };
 
   const getWaterPrice = () => {
-    if (!selectedLiters || selectedLiters < 1) {
+    if (!selectedLiters) {
       return 0;
     }
     if (basePrices[selectedLiters]) {
@@ -64,14 +96,10 @@ window.addEventListener('load', function () {
     return Math.round(selectedLiters * 28 * quantity);
   };
 
-  const updatePrices = () => {
-    const waterPrice = getWaterPrice();
-    waterPriceLabel.textContent = formatPrice(waterPrice);
-    deliveryFeeLabel.textContent = formatPrice(deliveryFee);
-    orderTotalLabel.textContent = formatPrice(waterPrice + deliveryFee);
-  };
-
   const setPaymentInfo = paymentMethod => {
+    if (!paymentInfo) {
+      return;
+    }
     if (paymentMethod === 'cash') {
       paymentInfo.textContent = 'Pay cash when your water is delivered anywhere in Nairobi.';
     } else {
@@ -79,23 +107,33 @@ window.addEventListener('load', function () {
     }
   };
 
-  qtyMinus.addEventListener('click', () => {
-    if (quantity > 1) {
-      quantity -= 1;
-      qtyValue.textContent = quantity;
-      updatePrices();
-    }
-  });
+  if (qtyMinus) {
+    qtyMinus.addEventListener('click', () => {
+      if (quantity > 1) {
+        quantity -= 1;
+        if (qtyValue) {
+          qtyValue.textContent = quantity;
+        }
+        updatePrices();
+      }
+    });
+  }
 
-  qtyPlus.addEventListener('click', () => {
-    quantity += 1;
-    qtyValue.textContent = quantity;
-    updatePrices();
-  });
+  if (qtyPlus) {
+    qtyPlus.addEventListener('click', () => {
+      quantity += 1;
+      if (qtyValue) {
+        qtyValue.textContent = quantity;
+      }
+      updatePrices();
+    });
+  }
 
   litersButtons.forEach(button => {
     button.addEventListener('click', () => {
-      customLitersInput.value = '';
+      if (customLitersInput) {
+        customLitersInput.value = '';
+      }
       updateSelection(button.dataset.liters);
     });
   });
@@ -104,43 +142,60 @@ window.addEventListener('load', function () {
     card.addEventListener('click', () => {
       const liters = card.dataset.liters;
       if (liters) {
-        customLitersInput.value = '';
+        if (customLitersInput) {
+          customLitersInput.value = '';
+        }
         updateSelection(liters);
       }
     });
   });
 
-  customLitersInput.addEventListener('input', event => {
-    const value = Number(event.target.value);
-    if (value > 0) {
-      selectedLiters = value;
-      litersButtons.forEach(button => button.classList.remove('active'));
-      galleryCards.forEach(card => card.classList.remove('active'));
-      updatePrices();
-    }
-  });
+  if (customLitersInput) {
+    customLitersInput.addEventListener('input', event => {
+      const value = normalizeLiters(event.target.value);
+      if (value > 0) {
+        selectedLiters = value;
+        litersButtons.forEach(button => button.classList.remove('active'));
+        galleryCards.forEach(card => card.classList.remove('active'));
+        updatePrices();
+      } else {
+        updatePrices();
+      }
+    });
+  }
 
-  document.querySelectorAll('input[name="payment"]').forEach(input => {
+  paymentInputs.forEach(input => {
     input.addEventListener('change', event => setPaymentInfo(event.target.value));
   });
 
   orderForm.addEventListener('submit', event => {
     event.preventDefault();
-    const name = document.getElementById('customerName').value.trim();
-    const phone = document.getElementById('customerPhone').value.trim();
-    const location = document.getElementById('locationSelect').value;
+    const nameInput = document.getElementById('customerName');
+    const phoneInput = document.getElementById('customerPhone');
+    const locationSelect = document.getElementById('locationSelect');
+
+    const name = nameInput ? nameInput.value.trim() : '';
+    const phone = phoneInput ? phoneInput.value.trim() : '';
+    const location = locationSelect ? locationSelect.value : '';
 
     if (!name || !phone || !location) {
-      orderFeedback.className = 'order-feedback error';
-      orderFeedback.textContent = 'Please fill in your name, phone, and location to place your order.';
+      if (orderFeedback) {
+        orderFeedback.className = 'order-feedback error';
+        orderFeedback.textContent = 'Please fill in your name, phone, and location to place your order.';
+      }
       return;
     }
 
-    orderFeedback.className = 'order-feedback';
-    orderFeedback.textContent = `Thanks ${name}! Your order for ${quantity} × ${selectedLiters}L water is ready. We will contact you at ${phone} and deliver to ${location}.`;
+    if (orderFeedback) {
+      orderFeedback.className = 'order-feedback';
+      orderFeedback.textContent = `Thanks ${name}! Your order for ${quantity} × ${selectedLiters}L water is ready. We will contact you at ${phone} and deliver to ${location}.`;
+    }
+
     orderForm.reset();
     quantity = 1;
-    qtyValue.textContent = quantity;
+    if (qtyValue) {
+      qtyValue.textContent = quantity;
+    }
     updateSelection(5);
     setPaymentInfo('mpesa');
   });
