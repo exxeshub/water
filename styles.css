@@ -527,6 +527,7 @@ h1 {
   width: 100%;
 }
 .contact-grid {
+  display: grid;
   grid-template-columns: 1.25fr 0.9fr;
   align-items: start;
 }
